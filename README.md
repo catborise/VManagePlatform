@@ -1,54 +1,54 @@
-## VManagePlatform是什么?
-一个KVM虚拟化管理平台
+## What is VManagePlatform?
+KVM virtualization management platform
 
-**开源协议**：[GNU General Public License v2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+**Open Source Agreement**：[GNU General Public License v2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
-**开源声明**：欢迎大家star或者fork我的开源项目，如果大家在自己的项目里面需要引用该项目代码，请在项目里面申明协议和版权信息。
-## 开发语言与框架：
-* 编程语言：Python2.7 + HTML + JScripts
-* 前端Web框架：Bootstrap 
-* 后端Web框架：Django  
-* 后端Task框架：Celery + Redis
+**Open Source Statement **: Welcome to star or fork my open source project, if you need to refer to the project code in your project, please declare agreement and copyright information in the project
+## Development languages and frameworks
+* Programming language Python2.7 + HTML + JScripts
+* Front-end Web framework：Bootstrap 
+* Backend Web framework：Django  
+* Backend Task Framework：Celery + Redis
 
 ## QQ交流群
 ![image](https://github.com/welliamcao/OpsManage/blob/master/demo_imgs/qq_group.png)
 
-## VManagePlatform有哪些功能？
+## What are the features of VManagePlatform ?
 
-* Kvm虚拟机`生产周期`管理功能
-    *  资源利用率（如：CPU、MEM、磁盘、网络）
-    *  实例控制（如：生存周期管理、快照技术，Web Console等等）
-    *  设备资源控制（如：在线调整内存、CPU资源、热添加、删除硬盘）
-* 存储池管理
-    *  增减卷，支持主流类型存储类型
-    *  资源利用率
-* 网络管理
-    *  支持SDN，底层网络使用OpenVSwitch/Linux Bridge，IP地址分配，网卡流量限制等等。
-* 用户管理
-    *  支持用户权限，用户组，用户虚拟机资源分配等等 
-* 宿主机
-    *  资源利用率，实例控制
+* KVM VM 'lifecycle' management functions
+    *  Resource utilization (eg: CPU, MEM, disk, network)
+    *  Instance control (such as: life cycle management, snapshot technology, Web Console, etc.)
+    *  Device resource control (such as: online adjustment of memory, CPU resources, hot add, delete hard disk)
+* Storage pool management
+    *   Increase or decrease volumes to support mainstream storage types
+    *  Resource utilization
+* Network Management
+    *  SDN is supported, the underlying network uses OpenVSwitch/Linux Bridge, IP address allocation, network card traffic restrictions, and so on.
+* User Management
+    *  Support user rights, user groups, user virtual machine resource allocation, etc. 
+* Host Machine
+    *  Resource utilization, instance control
 
-## 环境要求：
-* 编程语言：Python2.7 
-* 系统：CentOS 7 
-* 网络规划：管理网络接口=1，虚拟化数据网络>=1，如果只有一个网卡使用OpenVswitch时需要手动配置网络以免丢失网络
-* SDN需求：OpenVswitch Or Linux Birdge
+## Environmental requirements:
+* Programming language：Python2.7 
+* Operating System：CentOS 7 
+* Network planning: Management network interface=1, virtualized data network>=1 (if you only need one network card to use OpenVswitch, you need to manually configure the network to avoid losing the network)
+* SDN Requirements：OpenVswitch Or Linux Bridge
 
 ## TIPS：
-* 控制服务器：执行1-10步骤 
-* 节点服务器：执行2/3/4步骤，在控制服务器上执行5步骤中的ssh-copy-id
-* 为了更好的体验，建议使用Chrome或者Foxfire，如果要获取虚拟机ip，请在虚拟机里面安装qemu-guest-agent(centos 6需要安装libvirt>=2.3.0以上)
-* 主机列表跟用户中心-我的虚拟机的数据更新，需要在任务调度里面配置task
+* Management Server: Perform 1-10 steps
+* Compute Node: Perform 2/3/4 steps and execute ssh-copy-id in Step 5 on the management server
+* For a better experience, it is recommended to use Chrome or Firefox browser. If you want to get virtual machine ip, please install qemu-guest-agent in the virtual machine (centos 6 needs to install libvirt>=2.3.0 or more)
+* The host list and user center - the data of my virtual machine is updated. Tasks need to be configured in the task schedule.
 
-## 虚拟机添加流程：
-* 第一步，平台先添加宿主机（计算节点） 
-* 第二步，添加数据类型存储池与镜像存储池
-	* 镜像存储池： 计算节点添加dir类型存储池，把ISO镜像文件放到存储池里面或者可以将ISO镜像文件做成NFS共享，添加存储池的时候选择nfs模式。（注：以便添加虚拟机的时候能加载到系统镜像）
-	* 数据存储池：按照页面添加即可，主要用来存储虚拟机硬盘。
-* 第三步，计算节点添加网络，可选择bridge与nat模式
-* 第四步，为计算节点分配虚拟机
-* 第五步，配置任务调度，自动更新计算节点虚拟机资源信息
+## Virtual machine add process:
+* In the first step, the platform first adds the host (compute node)
+* The second step, adding a data type storage pool and a mirror storage pool
+	* Mirrored Storage Pool: The compute node adds a dir type storage pool, puts the ISO image file in the storage pool, or can make the ISO image file an NFS share. When adding a storage pool, select the NFS mode. (Note: In order to add a virtual machine can be loaded into the system image)
+	* Data storage pool: According to the page to add, it is mainly used to store virtual machine hard disk.
+* The third step, computing nodes add network, select bridge and nat mode
+* The fourth step is to allocate virtual machines for compute nodes
+* Step 5: Configure Task Scheduling to Automatically Update the VM Resource Information of Compute Nodes
 
 
 ## 安装环境配置</br>
