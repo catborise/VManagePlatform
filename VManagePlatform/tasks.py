@@ -9,21 +9,21 @@ from VManagePlatform.models import VmLogs,VmServerInstance,VmDHCP
 
 
 '''
-Django 版本大于等于1.7的时候，需要加上下面两句
+When Django version is greater than or equal to 1.7, the following two sentences need to be added:
 import django
 django.setup()
-否则会抛出错误 django.core.exceptions.AppRegistryNotReady: Models aren't loaded yet.
+Otherwise it will throw an error  django.core.exceptions.AppRegistryNotReady: Models aren't loaded yet.
 '''
  
 import django
-if django.VERSION >= (1, 7):#自动判断版本
+if django.VERSION >= (1, 7):# Automatically determine the version
     django.setup()
 
 
 '''
-    异步通知功能模块：by welliam.cao@ijinzhuan.com 2016/06/28
-    task   处理能带参数的task
-    task() 处理不需要带参数的task，不能混用不然提示task没有注册^-^!
+    Asynchronous notification function module：by welliam.cao@ijinzhuan.com 2016/06/28
+    task   Processing tasks with parameters
+    task() Processing does not require the task with parameters, can not be mixed or else the prompt task does not register ^-^!
 '''
                     
 @task()
@@ -105,7 +105,7 @@ def updateVMinstance(host=None):
 
 @task()
 def checkVMinstance():
-    '''检查所有宿主机上面的实例，如果不存在的实例则从数据库里面清除掉'''
+    '''Check all instances on the host machine, and if it does not exist, remove it from the database'''
     serverList = VmServer.objects.all()    
     for server in  serverList:
         if server.status == 0:     
@@ -158,39 +158,39 @@ def migrateInstace(data,user=None):
         return e 
     try:
         VMS = LibvirtManage(vMserver.server_ip,vMserver.username, vMserver.passwd, vMserver.vm_type,pool=False)
-        #获取要迁移的虚拟机硬盘情况
+        #Get the virtual machine hard disk to be migrated
         INSTANCE = VMS.genre(model='instance')
         instance = INSTANCE.queryInstance(name=str(data.get('vm_name')))
         source_instance = INSTANCE.getVmInstanceInfo(server_ip=vMserver.server_ip, vm_name=data.get('vm_name'))            
     except Exception,e:
         return e           
     try:
-        #连接远程宿主机，获取存储池，然后在存储池里面创建跟迁移的虚拟机相同的硬盘
+        #Connect to the remote host, acquire the storage pool, and then create the same hard disk in the storage pool as the migrated virtual machine
         vMTargetserver = VmServer.objects.get(id=data.get('server_tid'))
     except Exception,e:
         return e     
     targetUri = str(vMTargetserver.uri).replace('qemu+','').replace('/system','')
     TargetVMS = LibvirtManage(vMserver.server_ip,vMserver.username, vMserver.passwd, vMserver.vm_type,pool=False)
     TargetStorage = TargetVMS.genre(model='storage')
-    #获取被迁移的虚拟机磁盘配置，并且到远程服务器上创建，相同的磁盘配置
+    #Get the migrated virtual machine disk configuration and create it on the remote server, the same disk configuration
     for volume in source_instance.get('disks'):
         if volume.get('disk_sn').startswith('vd'):
             pool_name = volume.get('disk_pool')
             if pool_name:
-                #判断远程服务器上是否存在相同的存储池
+                #Determine if the same storage pool exists on the remote server
                 pool = TargetStorage.getStoragePool(pool_name=pool_name)
                 if pool:
                     volume_name = volume.get('disk_path')
                     pathf = os.path.dirname(volume.get('disk_path'))
                     volume_name = volume_name[len(pathf)+1:]
-                    #创建磁盘
+                    #Create a disk
                     traget_volume = TargetStorage.createVolumes(pool, volume_name=volume_name, volume_capacity=volume.get('disk_size'),flags=0)            
     result = INSTANCE.migrate(instance,TargetVMS.conn,data.get('vm_tname'),targetUri)
     TargetVMS.close() 
     VMS.close()
     if result:result = 0
     else:result = 1
-    desc = u'迁移虚拟机{vm_name}至{server_ip}宿主机'.format(vm_name=data.get('vm_name'),server_ip=targetUri)
+    desc = u'Migrate virtual machine {vm_name} to {server_ip} host'.format(vm_name=data.get('vm_name'),server_ip=targetUri)
     try:
         result = VmLogs.objects.create(server_id=data.get('server_id'),vm_name=data.get('vm_name'),
                                        content=desc,
@@ -226,7 +226,7 @@ def cloneInstace(data,user=None):
     VMS.close()
     try:
         result = VmLogs.objects.create(server_id=data.get('server_id'),vm_name=insName,
-                                       content="克隆虚拟机：{name}".format(name=insName),
+                                       content="Clone a virtual machine：{name}".format(name=insName),
                                        user=user,status=result,isRead=0) 
         if result:return True
         else:return False
@@ -246,11 +246,11 @@ def snapInstace(data,user):
         VMS.close()
         if isinstance(status, str) is False:
             VmLogs.objects.create(server_id=data.get('server_id'),vm_name=data.get('vm_name'),
-                                       content="虚拟机{name}创建快照{snap}".format(name=data.get('vm_name'),snap=data.get('snap_name')),
+                                       content="Virtual machine {name} creates a snapshot {snap}".format(name=data.get('vm_name'),snap=data.get('snap_name')),
                                        user=user,status=0,isRead=0) 
         else:
             VmLogs.objects.create(server_id=data.get('server_id'),vm_name=data.get('vm_name'),
-                                       content="虚拟机{name}创建快照{snap}".format(name=data.get('vm_name'),snap=data.get('snap_name')),
+                                       content="Virtual machine {name} creates a snapshot {snap}".format(name=data.get('vm_name'),snap=data.get('snap_name')),
                                        user=user,status=1,isRead=0,result=status)             
         
     except Exception,e:
@@ -267,11 +267,11 @@ def revertSnapShot(data,user):
         VMS.close()
         if isinstance(status, int):
             VmLogs.objects.create(server_id=data.get('server_id'),vm_name=data.get('vm_name'),
-                                       content="虚拟机{name}恢复快照{snap}".format(name=data.get('vm_name'),snap=data.get('snap_name')),
+                                       content="Virtual machine {name} restores snapshot {snap}".format(name=data.get('vm_name'),snap=data.get('snap_name')),
                                        user=user,status=0,isRead=0) 
         else:
             VmLogs.objects.create(server_id=data.get('server_id'),vm_name=data.get('vm_name'),
-                                       content="虚拟机{name}恢复快照{snap}".format(name=data.get('vm_name'),snap=data.get('snap_name')),
+                                       content="Virtual machine {name} restores snapshot {snap}".format(name=data.get('vm_name'),snap=data.get('snap_name')),
                                        user=user,status=1,isRead=0,result=status)            
     except Exception,e:
         return e       
